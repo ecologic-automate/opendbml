@@ -55,6 +55,12 @@ type EditorSnapshot = {
   tablePositions: Record<string, { x: number; y: number }>
 }
 
+type UiPreferences = {
+  darkMode: boolean
+  gridVisible: boolean
+  accentColor: string
+}
+
 const defaultSource = `Table users {
   id int [pk, increment]
   username string
@@ -113,7 +119,7 @@ async function getFileStore() {
   if (!fileStorePromise) {
     fileStorePromise = import('localforage').then((m) =>
       m.default.createInstance({
-        name: 'ecoschema',
+        name: 'open-dbml',
         storeName: 'files'
       })
     )
@@ -162,9 +168,36 @@ export function useProjectState() {
   const undoStack = useState<EditorSnapshot[]>('undoStack', () => [])
   const redoStack = useState<EditorSnapshot[]>('redoStack', () => [])
   const historyPaused = useState('historyPaused', () => false)
+  const darkMode = useState('darkMode', () => true)
+  const gridVisible = useState('gridVisible', () => true)
+  const accentColor = useState('accentColor', () => '#6d5ef8')
 
   const canUndo = computed(() => undoStack.value.length > 0)
   const canRedo = computed(() => redoStack.value.length > 0)
+
+  function hexToRgb(hex: string) {
+    const cleaned = hex.replace('#', '').trim()
+    const full = cleaned.length === 3 ? cleaned.split('').map((c) => c + c).join('') : cleaned
+    const num = Number.parseInt(full, 16)
+    if (Number.isNaN(num)) {
+      return '109, 94, 248'
+    }
+    const r = (num >> 16) & 255
+    const g = (num >> 8) & 255
+    const b = num & 255
+    return `${r}, ${g}, ${b}`
+  }
+
+  function applyUiTheme() {
+    if (!import.meta.client) {
+      return
+    }
+    const root = document.documentElement
+    const accent = accentColor.value || '#6d5ef8'
+    root.style.setProperty('--accent', accent)
+    root.style.setProperty('--accent-rgb', hexToRgb(accent))
+    root.classList.toggle('theme-light', !darkMode.value)
+  }
 
   function ensureTablePosition(tableKey: string, fallbackIndex: number) {
     if (!tablePositions.value[tableKey]) {
@@ -504,6 +537,18 @@ export function useProjectState() {
       return
     }
     initialized.value = true
+    try {
+      const raw = localStorage.getItem('open-dbml-ui')
+      if (raw) {
+        const ui = JSON.parse(raw) as Partial<UiPreferences>
+        if (typeof ui.darkMode === 'boolean') darkMode.value = ui.darkMode
+        if (typeof ui.gridVisible === 'boolean') gridVisible.value = ui.gridVisible
+        if (typeof ui.accentColor === 'string' && ui.accentColor.trim()) accentColor.value = ui.accentColor
+      }
+    } catch {
+      // ignore malformed local preference payload
+    }
+    applyUiTheme()
     parseSource()
     await loadFileList()
     if (files.value.length > 0) {
@@ -550,6 +595,19 @@ export function useProjectState() {
     }, 700)
   }, { deep: true })
 
+  watch([darkMode, gridVisible, accentColor], () => {
+    if (!import.meta.client) {
+      return
+    }
+    applyUiTheme()
+    const payload: UiPreferences = {
+      darkMode: darkMode.value,
+      gridVisible: gridVisible.value,
+      accentColor: accentColor.value
+    }
+    localStorage.setItem('open-dbml-ui', JSON.stringify(payload))
+  }, { deep: true })
+
   return {
     fileName,
     currentFile,
@@ -559,6 +617,9 @@ export function useProjectState() {
     sourceText,
     parserError,
     lastSave,
+    darkMode,
+    gridVisible,
+    accentColor,
     views,
     diagramTables,
     relationships,

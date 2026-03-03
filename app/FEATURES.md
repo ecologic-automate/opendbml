@@ -1,4 +1,4 @@
-# EcoSchema Feature Backlog
+# Open DBML Feature Backlog
 
 ## Diagram Views Panel (from `app/d/Screenshot 2026-03-03 154040.png`)
 

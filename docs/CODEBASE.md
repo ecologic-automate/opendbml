@@ -2,122 +2,52 @@
 
 ## Overview
 
-`EcoSchema` is a Quasar + Vue 3 single-page app for editing DBML and rendering interactive database diagrams.
+`Open DBML` is a Nuxt 3 + Vue 3 application for editing DBML and rendering interactive database diagrams.
 
-At runtime, the app:
-
-1. Edits DBML text in an Ace editor.
-2. Parses DBML to an in-memory database model via `@dbml/core`.
-3. Renders diagram tables/refs from that model.
-4. Persists files/layout locally with `localforage`.
-5. Optionally syncs JSON files to/from an S3-compatible object store.
+Runtime flow:
+1. DBML is edited in the split/code editor.
+2. `@dbml/core` parses DBML into an in-memory model.
+3. Diagram tables and relationships are derived from that model.
+4. Files/layout are persisted locally via IndexedDB (`localforage`).
 
 ## Repository Structure
 
-- `api/`: placeholder folder only (`.gitkeep`), no backend implementation in this repo.
-- `web/`: main frontend application (Quasar/Vue).
-- `docs/`: project-level documentation.
+- `app/`: active Nuxt application.
+- `docs/`: documentation.
+- `.github/`: workflow and contribution templates.
 
-## Frontend Architecture (`web/`)
+## Core App Files
 
-### Entry and Routing
+- `app/composables/useProjectState.ts`:
+  - central editor state
+  - DBML parsing
+  - local file save/load
+  - undo/redo
+  - relationship creation logic
+- `app/components/DiagramCanvas.vue`:
+  - table rendering
+  - drag/move interactions
+  - relationship line rendering
+  - drag-to-connect behavior
+- `app/components/AppTopbar.vue`:
+  - file actions (new/save/rename/delete/import/export)
+  - undo/redo controls
+- `app/components/AppSidebar.vue`:
+  - app navigation and logo
+- `app/pages/*`:
+  - main diagram, split editor, views, relationships, settings
 
-- App entry: `src/App.vue` (renders router view).
-- Main shell: `src/layouts/MainLayout.vue` (header + toolbar slot + page container).
-- Routes:
-  - `/editor` -> `src/pages/Editor/Index.vue` (main editor page) + `src/pages/Editor/Toolbar.vue` (named toolbar view).
-  - catch-all -> `src/pages/Error404.vue`.
+## Persistence
 
-### Boot Files
+Local IndexedDB store:
+- database name: `open-dbml`
+- store: `files`
 
-Configured in `quasar.conf.js`:
-
-- `src/boot/i18n.js`: Vue I18n setup.
-- `src/boot/ace.js`: Ace extensions/themes + DBML mode registration.
-- `src/boot/pinia.js`: Pinia registration + global store plugin.
-- `src/boot/v3num.js`: numeric input helper boot file.
-
-### Core UI Components
-
-- `src/components/DbmlEditor.vue`:
-  - Ace-based DBML text editor.
-  - Mirrors source text through `v-model`.
-  - Displays parse errors as inline annotations.
-  - Highlights selected tokens when chart items are activated.
-
-- `src/components/DbmlGraph.vue`:
-  - Hosts diagram chart (`VDbChart`).
-  - Provides auto-layout and fit-to-view controls.
-  - Supports double-click navigation from graph objects back to source tokens.
-
-- `src/components/VDbChart/*`:
-  - Diagram rendering primitives (tables, refs, groups, panels, tooltips).
-
-- `src/components/VDbExportDialog.vue` and `src/components/VDbImportDialog.vue`:
-  - Import/export workflows for DBML/SQL/JSON/SVG/PNG.
-
-## State Management (Pinia)
-
-### `editor` Store (`src/store/editor.js`)
-
-Responsible for source and parsed model:
-
-- `source`: current DBML text + selection markers.
-- `database`: parsed DB model (`schemas`, `tables`, `refs`, groups).
-- `preferences`: editor theme, dark mode, split ratio.
-- `parserError`: parse error location/message shown in editor.
-
-Key action flow:
-
-- `updateSourceText` updates source.
-- store plugin debounces `updateDatabase`.
-- `updateDatabase` uses `Parser.parse(...)` from `@dbml/core`.
-- on success, chart store receives the normalized database.
-
-### `chart` Store (`src/store/chart.js`)
-
-Responsible for diagram state:
-
-- viewport (`zoom`, `pan`, CTM data).
-- table/group/ref geometry.
-- table header colors.
-- tooltip and side-panel visibility/state.
-
-Also exposes persisted chart payload for local file saves.
-
-### `files` Store (`src/store/files.js`)
-
-Responsible for local file lifecycle via `localforage` store `files`:
-
-- list files, load/save/rename/delete.
-- track current file.
-- reset editor + chart for new files.
-
-Saved file payload combines:
-
-- `editor.save` (source + preferences)
-- `chart.save` (diagram positioning/appearance)
-
-### `repo` Store (`src/store/repo.js`)
-
-Responsible for S3-compatible remote storage:
-
-- stores repository config in `localforage` store `repo` under key `cfg`.
-- creates S3 client from user settings.
-- lists remote objects, filters by configured folder prefix(es), and handles upload/download.
-
-Required settings:
-
-- `host`, `bucket`, `region`, `access_key`, `secret_key`
-- `path` supports multiple comma-separated folder roots.
-
-## Persistence Model
-
-Two local persistence mechanisms are used:
-
-1. `localStorage` via `src/utils/storageUtils.js`:
-   - `dbml-preferences`
-   - `dbml-currentFile`
+Saved payload:
+- `sourceText`
+- `zoom`
+- `split`
+- `tablePositions`
 
 2. `localforage`:
    - `files` store: full file payloads (source + chart).

@@ -1,6 +1,6 @@
-# EcoSchema
+# Open DBML
 
-EcoSchema is an open-source database diagram editor with a local-first workflow.
+Open DBML is an open-source database diagram editor with a local-first workflow.
 
 ## Current App
 The active application lives in `app/` (Nuxt 3 + Vue 3).

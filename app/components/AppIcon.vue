@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const props = defineProps<{
-  name: 'layout-grid' | 'eye' | 'git-branch' | 'settings' | 'plus' | 'table2' | 'key' | 'link2' | 'clock' | 'external-link' | 'x'
+  name: 'layout-grid' | 'eye' | 'git-branch' | 'settings' | 'plus' | 'table2' | 'key' | 'link2' | 'clock' | 'external-link' | 'x' | 'moon' | 'sun'
   size?: number
 }>()
 
@@ -82,6 +82,22 @@ const size = computed(() => props.size ?? 18)
     <template v-else-if="name === 'x'">
       <line x1="18" y1="6" x2="6" y2="18" />
       <line x1="6" y1="6" x2="18" y2="18" />
+    </template>
+
+    <template v-else-if="name === 'moon'">
+      <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z" />
+    </template>
+
+    <template v-else-if="name === 'sun'">
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2" />
+      <path d="M12 20v2" />
+      <path d="M4.9 4.9l1.4 1.4" />
+      <path d="M17.7 17.7l1.4 1.4" />
+      <path d="M2 12h2" />
+      <path d="M20 12h2" />
+      <path d="M4.9 19.1l1.4-1.4" />
+      <path d="M17.7 6.3l1.4-1.4" />
     </template>
   </svg>
 </template>

@@ -1,12 +1,9 @@
 <script setup lang="ts">
-const { fileName } = useProjectState()
+const { fileName, gridVisible, accentColor } = useProjectState()
 const tab = ref<'general' | 'appearance' | 'account' | 'integrations' | 'shortcuts'>('general')
 const autoSave = ref(true)
-const darkMode = ref(true)
-const gridVisible = ref(true)
 const syncEnabled = ref(false)
 const dbType = ref('PostgreSQL')
-const accent = ref('#6D5EF8')
 </script>
 
 <template>
@@ -41,9 +38,8 @@ const accent = ref('#6D5EF8')
 
       <div v-if="tab === 'appearance'" class="settings-panel">
         <h2>Appearance</h2>
-        <label class="switch-line"><span>Dark Mode</span><input v-model="darkMode" type="checkbox"></label>
         <label class="switch-line"><span>Grid Visibility</span><input v-model="gridVisible" type="checkbox"></label>
-        <label>Accent Color <input v-model="accent" type="color"></label>
+        <label>Accent Color <input v-model="accentColor" type="color"></label>
       </div>
     </div>
   </section>

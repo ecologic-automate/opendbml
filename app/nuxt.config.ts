@@ -4,8 +4,12 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   app: {
     head: {
-      title: 'EcoSchema',
-      meta: [{ name: 'viewport', content: 'width=device-width, initial-scale=1' }]
+      title: 'Open DBML',
+      meta: [{ name: 'viewport', content: 'width=device-width, initial-scale=1' }],
+      link: [
+        { rel: 'icon', type: 'image/png', href: '/logo/open-dbml-logo.png' },
+        { rel: 'apple-touch-icon', href: '/logo/open-dbml-logo.png' }
+      ]
     }
   }
 })

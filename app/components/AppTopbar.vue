@@ -14,8 +14,10 @@ const {
   canUndo,
   canRedo,
   undo,
-  redo
+  redo,
+  darkMode
 } = useProjectState()
+const route = useRoute()
 
 function handleFileSelect(event: Event) {
   const value = (event.target as HTMLSelectElement).value
@@ -102,12 +104,27 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('keydown', onKeydown)
 })
+
+function toggleDarkMode() {
+  darkMode.value = !darkMode.value
+}
 </script>
 
 <template>
   <header class="topbar">
     <div class="left">
-      <button class="icon-btn" aria-label="Back">&lt;</button>
+      <div class="brand-badge">
+        <img src="/logo/open-dbml-logo.png" alt="Open DBML logo" class="brand-logo">
+        <span class="brand-text">Open DBML</span>
+      </div>
+      <button
+        v-if="route.path === '/'"
+        class="theme-float-btn"
+        :title="darkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+        @click="toggleDarkMode"
+      >
+        <AppIcon :name="darkMode ? 'moon' : 'sun'" :size="16" />
+      </button>
       <button class="ghost" :disabled="!canUndo" title="Undo (Ctrl/Cmd+Z)" @click="undo">Undo</button>
       <button class="ghost" :disabled="!canRedo" title="Redo (Ctrl+Y / Cmd+Shift+Z)" @click="redo">Redo</button>
       <button class="name-chip" @click="rename">{{ fileName }}</button>

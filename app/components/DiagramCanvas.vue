@@ -22,6 +22,7 @@ const connecting = ref<{ sourceKey: string; sourceName: string; sourceField: str
 const pointerCanvas = ref({ x: 0, y: 0 })
 const scrollX    = ref(0)
 const scrollY    = ref(0)
+const { gridVisible, darkMode } = useProjectState()
 
 const scale = computed(() => (props.zoom ?? 55) / 100)
 
@@ -227,7 +228,11 @@ onBeforeUnmount(() => {
 <template>
   <!-- dc-wrap is position:relative, no overflow — minimap anchors to it -->
   <div class="dc-wrap">
-  <section ref="sectionRef" class="diagram-canvas">
+  <section
+    ref="sectionRef"
+    class="diagram-canvas"
+    :class="{ 'grid-hidden': !gridVisible, 'canvas-light': !darkMode }"
+  >
 
     <!-- ── Scaled content ────────────────────────────────────────────────── -->
     <div class="canvas-viewport" :style="{ transform: `scale(${scale})`, transformOrigin: 'top left' }">

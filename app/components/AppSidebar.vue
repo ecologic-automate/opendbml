@@ -16,7 +16,7 @@ const showAdd = computed(() => route.path === '/' || route.path === '/split')
 <template>
   <aside class="sidebar">
     <div class="logo-badge">
-      <AppIcon name="table2" :size="18" />
+      <img src="/logo/open-dbml-logo.png" alt="Open DBML logo" class="logo-img">
     </div>
 
     <nav class="menu">
