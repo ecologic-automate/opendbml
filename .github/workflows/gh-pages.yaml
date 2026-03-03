@@ -22,9 +22,11 @@ jobs:
         working-directory: app
         run: npm ci
 
-      - name: Build Nuxt app for static hosting
+      - name: Generate static site
         working-directory: app
-        run: npm run build
+        env:
+          NUXT_APP_BASE_URL: /opendbml/
+        run: npm run generate
 
       - name: Prepare 404 fallback
         working-directory: app
