@@ -62,3 +62,52 @@ Add a left-side "Diagram Views" panel to control what tables are visible in the 
 - Save current visibility as a new view
 - Rename/delete saved views
 - No advanced permissions/sharing in v1
+
+## Workspace Export to Disk (Optional Local Backup)
+
+### Summary
+Add a user-facing action to download the entire current workspace to disk as a portable file, then allow restoring/importing it later.
+
+### Requirements
+- One-click export of current workspace (DBML source, layout positions, view state, preferences).
+- File format should be versioned JSON (for forward-compatible migrations).
+- Import flow should validate and preview before overwrite.
+- Keep this optional; local IndexedDB remains default persistence.
+
+### Complexity
+- Overall difficulty: **Medium (5/10)**
+- Estimated effort: **1-2 days** for MVP
+
+### Proposed payload
+```json
+{
+  "version": 1,
+  "meta": {
+    "app": "open-dbml",
+    "exportedAt": "ISO_TIMESTAMP"
+  },
+  "workspace": {
+    "sourceText": "...",
+    "tablePositions": {},
+    "zoom": 55,
+    "split": 56,
+    "preferences": {
+      "darkMode": true,
+      "gridVisible": true,
+      "accentColor": "#6d5ef8"
+    }
+  }
+}
+```
+
+### MVP implementation plan
+1. Add `exportWorkspace()` and `importWorkspace()` in `useProjectState`.
+2. Add toolbar menu actions:
+   - `Download Workspace`
+   - `Import Workspace`
+3. Validate JSON schema + `version` before applying.
+4. On import success, re-parse DBML and persist to IndexedDB.
+
+### Risks
+- Overwriting current workspace accidentally.
+- Backward compatibility for future schema changes.

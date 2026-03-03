@@ -1,5 +1,9 @@
 # Open DBML
 
+[![CI](https://github.com/ecologic-automate/opendbml/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/ecologic-automate/opendbml/actions/workflows/ci.yaml)
+[![Deploy to GitHub Pages](https://github.com/ecologic-automate/opendbml/actions/workflows/gh-pages.yaml/badge.svg?branch=main)](https://github.com/ecologic-automate/opendbml/actions/workflows/gh-pages.yaml)
+[![Docker](https://github.com/ecologic-automate/opendbml/actions/workflows/docker.yaml/badge.svg?branch=main)](https://github.com/ecologic-automate/opendbml/actions/workflows/docker.yaml)
+
 Open DBML is an open-source database diagram editor focused on local-first editing, fast visual modeling, and DBML-driven workflows.
 
 ## Features
