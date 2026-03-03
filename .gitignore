@@ -23,6 +23,7 @@ node_modules/
 app/.nuxt/
 app/.output/
 app/dist/
+app/dist
 app/.nitro/
 app/.cache/
 

@@ -40,6 +40,19 @@ npm run build
 npm run preview
 ```
 
+## Docker
+Build locally:
+```bash
+docker build -t opendbml:local ./app
+```
+
+Run locally:
+```bash
+docker run --rm -p 8080:80 opendbml:local
+```
+
+Then open `http://localhost:8080`.
+
 ## Screenshots
 
 ### Dark Mode
@@ -59,6 +72,13 @@ npm run preview
 - [Code of Conduct](CODE_OF_CONDUCT.md)
 - [Changelog](CHANGELOG.md)
 - [Codebase Documentation](docs/CODEBASE.md)
+
+## CI/CD
+- CI (`.github/workflows/ci.yaml`): runs on pull requests to `main` only.
+- Pages Deploy (`.github/workflows/gh-pages.yaml`): runs on push to `main`.
+- Docker (`.github/workflows/docker.yaml`):
+  - pull requests: build-only validation
+  - push to `main`: build and publish to GHCR (`ghcr.io/ecologic-automate/opendbml`)
 
 ## License
 MIT. See [LICENSE](LICENSE).

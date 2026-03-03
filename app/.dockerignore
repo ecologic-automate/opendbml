@@ -1,0 +1,13 @@
+node_modules
+.npm
+.nuxt
+.output
+dist
+.git
+.gitignore
+Dockerfile
+screens
+error_screen
+d
+stitch_screens
+*.log
